@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     };
     Clinic.init({
+        name: DataTypes.STRING,
         address: DataTypes.STRING,
         description: DataTypes.TEXT, // chính là ID của bảng User
         image: DataTypes.STRING,

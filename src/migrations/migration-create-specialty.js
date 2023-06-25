@@ -8,6 +8,9 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
+            nane: {
+                type: Sequelize.STRING
+            },
             description: {
                 type: Sequelize.TEXT
             },
