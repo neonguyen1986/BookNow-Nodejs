@@ -5,9 +5,9 @@ let getHomePage = async (req, res) => { //async: đồng bộ
         let data = await db.User.findAll();
         //await phải được map theo Model name
         //User ko có s bởi vì trong file user thì User là của Model Name chứ ko phải users trong migration
-        console.log('==================')
-        console.log(data)
-        console.log('==================')
+        // console.log('==================')
+        // console.log(data)
+        // console.log('==================')
         return res.render('homepage.ejs', {
             data: JSON.stringify(data)
         });
