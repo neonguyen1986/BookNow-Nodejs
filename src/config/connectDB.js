@@ -3,7 +3,8 @@ const { Sequelize } = require('sequelize');
 // Option 3: Passing parameters separately (other dialects)
 const sequelize = new Sequelize('firstdb', 'root', null, {
     host: 'localhost', //thay địa chỉ server ở đây
-    dialect: 'mysql'
+    dialect: 'mysql',
+    logging: false
 });
 
 let connectDB = async () => {
