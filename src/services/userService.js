@@ -134,8 +134,42 @@ let createNewUser = (data) => {
     })
 }
 
-//================EDIT==================
+//================UPDATE==================
+let updateUserData = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id) {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'Missing required parameter'
+                })
+            }
+            let user = await db.User.findOne({
+                where: { id: data.id },
+                raw: false,//thêm vào để tắt raw
+            })
+            if (user) {
+                user.firstName = data.firstName;
+                user.lastName = data.lastName;
+                user.address = data.address;
 
+                await user.save();
+                resolve({
+                    errCode: 0,
+                    message: "User has been updated"
+                });
+            } else {
+                resolve({
+                    errCode: 2,
+                    message: "User is not found"
+                });
+
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 //================DELETE==================
 let deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
@@ -163,4 +197,5 @@ module.exports = {
     getAllUsers,
     createNewUser,
     deleteUser,
+    updateUserData,
 }

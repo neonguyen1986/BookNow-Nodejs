@@ -45,9 +45,11 @@ let handleCreateNewUsers = async (req, res) => {
     // console.log(message)
     return res.status(200).json(message);
 }
-//================EDIT==================
+//================UPDATE==================
 let handleEditUsers = async (req, res) => {
-
+    let data = req.body;
+    let message = await userService.updateUserData(data);
+    return res.status(200).json(message)
 }
 //================DELETE==================
 let handleDeleteUsers = async (req, res) => {
