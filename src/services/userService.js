@@ -1,6 +1,17 @@
 import db from '../models/index'
 import bcrypt from 'bcryptjs'
+const salt = bcrypt.genSaltSync(10) //genSaltSync là thư viện dùng để hash pass
 
+let hasUserPassword = (password) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let hashPassword = await bcrypt.hashSync(password, salt);
+            resolve(hashPassword); // trong Promise resolve tương đương return
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
 
 let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
@@ -88,7 +99,41 @@ let getAllUsers = (userId) => {
     })
 }
 
+let createNewUser = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            //check email availability
+            let check = await checkUserEmail(data.email)
+            if (check === true) {//email is exist in db
+                resolve({
+                    errCode: 0,
+                    message: 'This email is already used'
+                })
+            }
+            let hashPasswordFromBcrypt = await hasUserPassword(data.password)
+            await db.User.create({//create tương đương câu lệnh INSERTINTO USER... của SQL
+                email: data.email,
+                password: hashPasswordFromBcrypt,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                address: data.address,
+                phoneNumber: data.phoneNumber,
+                gender: data.gender === 1 ? true : false,
+                roleId: data.roleId,
+            })
+            resolve({
+                errCode: 0,
+                message: 'OK',
+            });
+
+
+        } catch (error) {
+
+        }
+    })
+}
 module.exports = {
     handleUserLogin,
     getAllUsers,
+    createNewUser,
 }

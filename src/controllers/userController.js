@@ -39,7 +39,14 @@ let handleGetAllUsers = async (req, res) => {
     })
 }
 
+let handleCreateNewUsers = async (req, res) => {
+    let message = await userService.createNewUser(req.body);
+    console.log(message)
+    return res.status(200).json(message);
+}
+
 module.exports = {
     handleLogin,
     handleGetAllUsers,
+    handleCreateNewUsers,
 }
