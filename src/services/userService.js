@@ -12,7 +12,24 @@ let hasUserPassword = (password) => {
         }
     })
 }
+let checkUserEmail = (userEmail) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { email: userEmail }
+            })
+            if (user) {
+                resolve(true)
+            } else {
+                resolve(false)
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
 
+//================LOG IN==================
 let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -55,24 +72,7 @@ let handleUserLogin = (email, password) => {
     })
 }
 
-
-let checkUserEmail = (userEmail) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let user = await db.User.findOne({
-                where: { email: userEmail }
-            })
-            if (user) {
-                resolve(true)
-            } else {
-                resolve(false)
-            }
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
-
+//================READ==================
 let getAllUsers = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -99,6 +99,7 @@ let getAllUsers = (userId) => {
     })
 }
 
+//================CREATE==================
 let createNewUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -132,8 +133,34 @@ let createNewUser = (data) => {
         }
     })
 }
+
+//================EDIT==================
+
+//================DELETE==================
+let deleteUser = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        let user = await db.User.findOne({
+            where: { id: userId }
+        })
+        if (!user) {
+            resolve({
+                errCode: 2,
+                message: `The user isn't exist`,
+            })
+        }
+        //await user.destroy();// cách này ko đc
+        await db.User.destroy({
+            where: { id: userId }
+        })
+        resolve({
+            errCode: 0,
+            errMessage: `The user is deleted`
+        })
+    })
+}
 module.exports = {
     handleUserLogin,
     getAllUsers,
     createNewUser,
+    deleteUser,
 }
