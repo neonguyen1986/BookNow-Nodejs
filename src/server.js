@@ -13,7 +13,7 @@ let app = express();
 
 //cross origin
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: process.env.URL_REACT,
     credentials: true,
 }));
 
