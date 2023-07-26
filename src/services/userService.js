@@ -108,7 +108,7 @@ let createNewUser = (data) => {
             if (check === true) {//email is exist in db
                 resolve({
                     errCode: 1,
-                    message: 'This email is already used'
+                    errMessage: 'This email is already used'
                 })
             } else {
                 console.log('check running')
@@ -125,7 +125,7 @@ let createNewUser = (data) => {
                 })
                 resolve({
                     errCode: 0,
-                    message: 'OK',
+                    errMessage: 'OK',
                 });
             }
 
@@ -157,12 +157,12 @@ let updateUserData = (data) => {
                 await user.save();
                 resolve({
                     errCode: 0,
-                    message: "User has been updated"
+                    errMessage: "User has been updated"
                 });
             } else {
                 resolve({
                     errCode: 2,
-                    message: "User is not found"
+                    errMessage: "User is not found"
                 });
 
             }
@@ -180,7 +180,7 @@ let deleteUser = (userId) => {
         if (!user) {
             resolve({
                 errCode: 2,
-                message: `The user isn't exist`,
+                errMessage: `The user isn't exist`,
             })
         }
         //await user.destroy();// cách này ko đc
