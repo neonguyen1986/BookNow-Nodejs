@@ -71,6 +71,10 @@ let handleUserLogin = (email, password) => {
         }
     })
 }
+//=================================================
+//             Sevices for User Manage            |
+//=================================================
+
 
 //================READ==================
 let getAllUsers = (userId) => {
@@ -194,10 +198,39 @@ let deleteUser = (userId) => {
         })
     })
 }
+
+//=================================================
+//             Sevices for Allcode                |
+//=================================================
+
+let getAllCodeService = (typeInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!typeInput) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters!'
+                })
+            } else {
+                let res = await db.Allcode.findAll({
+                    where: { type: typeInput }
+                })
+                resolve({
+                    errCode: 0,
+                    res
+                });
+            }
+        } catch (error) {
+            reject(error)
+        }
+
+    })
+}
 module.exports = {
     handleUserLogin,
     getAllUsers,
     createNewUser,
     deleteUser,
     updateUserData,
+    getAllCodeService,
 }
