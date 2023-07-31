@@ -212,12 +212,12 @@ let getAllCodeService = (typeInput) => {
                     errMessage: 'Missing required parameters!'
                 })
             } else {
-                let res = await db.Allcode.findAll({
+                let data = await db.Allcode.findAll({
                     where: { type: typeInput }
                 })
                 resolve({
                     errCode: 0,
-                    res
+                    data
                 });
             }
         } catch (error) {
