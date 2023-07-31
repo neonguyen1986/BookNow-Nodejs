@@ -30,7 +30,7 @@ let initWebRoutes = (app) => {
     router.delete('/api/delete-user', userController.handleDeleteUsers)
 
     //Build API for GETALLCODES
-    router.get('/allcodes', userController.getAllCode)
+    router.get('/api/allcodes', userController.getAllCode)
 
 
     return app.use("/", router)
