@@ -124,8 +124,9 @@ let createNewUser = (data) => {
                     lastName: data.lastName,
                     address: data.address,
                     phoneNumber: data.phoneNumber,
-                    gender: data.gender === 1 ? true : false,
-                    roleId: data.roleId,
+                    gender: data.gender,
+                    roleId: data.role,
+                    positionId: data.position,
                 })
                 resolve({
                     errCode: 0,
