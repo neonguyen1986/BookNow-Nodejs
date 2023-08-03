@@ -115,7 +115,6 @@ let createNewUser = (data) => {
                     errMessage: 'This email is already used'
                 })
             } else {
-                console.log('check running')
                 let hashPasswordFromBcrypt = await hasUserPassword(data.password)
                 await db.User.create({//create tương đương câu lệnh INSERTINTO USER... của SQL
                     email: data.email,

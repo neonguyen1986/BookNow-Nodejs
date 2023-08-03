@@ -27,13 +27,13 @@ let getCRUD = (req, res) => {
 
 let postCRUD = async (req, res) => {
     let message = await CRUDservice.createNewUser(req.body);
-    console.log(message);
+    // console.log(message);
     return res.send('post CRUD from server');
 }
 
 let displayGetCRUD = async (req, res) => {
     let data = await CRUDservice.getAllUser();
-    console.log(data)
+    // console.log(data)
     return res.render('displayCRUD.ejs', {
         dataTable: data //Điều này giúp ta hiểu dataTable sẽ được truyền sang displayCRUD chính là biến data trên
     })
@@ -43,9 +43,9 @@ let getEditCRUD = async (req, res) => {
     let userId = req.query.id; //nghĩa là gọi userId = id từ link được tạo ra khi nhấn edit localhost:8080/get-crud?id=2
     if (userId) {
         let userData = await CRUDservice.getUserInfoById(userId);
-        console.log('================')
-        console.log(userData)
-        console.log('================')
+        // console.log('================')
+        // console.log(userData)
+        // console.log('================')
         return res.render('editCRUD.ejs', {
             user: userData
         });

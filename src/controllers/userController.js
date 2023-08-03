@@ -51,7 +51,7 @@ let handleCreateNewUsers = async (req, res) => {
 //================UPDATE==================
 let handleEditUsers = async (req, res) => {
     let data = req.body;
-    console.log('>>>check data:', data)
+    // console.log('>>>check data:', data)
     let message = await userService.updateUserData(data);
     return res.status(200).json(message)
 }

@@ -25,9 +25,9 @@ let createNewUser = async (data) => {
     })
 
 
-    console.log('===data from service===');
-    console.log(data);
-    console.log(hashPasswordFromBcrypt)
+    // console.log('===data from service===');
+    // console.log(data);
+    // console.log(hashPasswordFromBcrypt)
 }
 
 let hasUserPassword = (password) => {
@@ -74,8 +74,8 @@ let getUserInfoById = (userId) => {
 }
 
 let updateUserData = (data) => {
-    console.log('==data from service==')
-    console.log(data)
+    // console.log('==data from service==')
+    // console.log(data)
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
