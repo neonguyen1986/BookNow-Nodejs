@@ -1,3 +1,4 @@
+import { resolveInclude } from 'ejs'
 import db from '../models/index'
 
 let getTopDoctorServiceNode = (limitInput) => {
@@ -72,8 +73,50 @@ let postDoctorsInfoServiceNode = (inputData) => {
         }
     })
 }
+
+let getDoctorsDetailByIdServiceNode = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameters'
+                })
+            } else {
+                let data = await db.User.findOne({
+                    where: {
+                        id: inputId
+                    },
+                    attributes: {
+                        exclude: ['password', 'image']
+                    },
+                    include: [
+                        {
+                            model: db.Markdown,
+                            attributes: ['description', 'HTMLContent', 'markdownContent']
+                        },
+                        {
+                            model: db.Allcode, as: 'positionData',
+                            attributes: ['valueEn', 'valueVi']
+                        },
+
+                    ],
+                    raw: true,
+                    nest: true,
+                })
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorServiceNode,
     getAllDoctorsSeviceNode,
     postDoctorsInfoServiceNode,
+    getDoctorsDetailByIdServiceNode,
 }
