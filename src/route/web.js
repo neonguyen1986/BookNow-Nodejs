@@ -32,10 +32,14 @@ let initWebRoutes = (app) => {
     //API for GETALLCODES
     router.get('/api/allcodes', userController.getAllCode)
 
-    //Doctor API
+    //Doctor API for homepage
     router.get('/api/homepage-top-doctor', doctorController.getTopDoctor)
     router.get('/api/get-all-doctors', doctorController.getAllDoctors)
+
+    //Doctor API for Manage Doctor
     router.post('/api/save-doctors-info', doctorController.postDoctorsInfo)
+    router.put('/api/update-doctors-info', doctorController.putDoctorsInfo)
+    //Doctor API for DoctorDetail page
     router.get('/api/get-doctors-detail-by-id', doctorController.getDoctorsDetailById)
 
 

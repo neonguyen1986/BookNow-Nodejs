@@ -53,9 +53,23 @@ let getDoctorsDetailById = async (req, res) => {
         })
     }
 }
+
+let putDoctorsInfo = async (req, res) => {
+    try {
+        let user = await doctorService.editDoctorMarkdownServiceNode(req.body)
+        return res.status(200).json(user)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        })
+    }
+}
 module.exports = {
     getTopDoctor,
     getAllDoctors,
     postDoctorsInfo,
     getDoctorsDetailById,
+    putDoctorsInfo,
 }

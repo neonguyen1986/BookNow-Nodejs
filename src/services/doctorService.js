@@ -1,6 +1,8 @@
 import { resolveInclude } from 'ejs'
 import db from '../models/index'
 
+//===================GET DOCTORS FOR OUSTANDING DOCTORS====================
+
 let getTopDoctorServiceNode = (limitInput) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -29,6 +31,7 @@ let getTopDoctorServiceNode = (limitInput) => {
         }
     })
 }
+//===================GET DOCTORS WITH USER INFO====================
 
 let getAllDoctorsSeviceNode = () => {
     return new Promise(async (resolve, reject) => {
@@ -48,6 +51,7 @@ let getAllDoctorsSeviceNode = () => {
         }
     })
 }
+//===================CREATE DOCTOR IN MARKDOWN DB====================
 let postDoctorsInfoServiceNode = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -73,7 +77,7 @@ let postDoctorsInfoServiceNode = (inputData) => {
         }
     })
 }
-
+//===================GET DOCTORS WITH USER INFO; MARKDOWN; POSITION NAME====================
 let getDoctorsDetailByIdServiceNode = (inputId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -88,7 +92,7 @@ let getDoctorsDetailByIdServiceNode = (inputId) => {
                         id: inputId
                     },
                     attributes: {
-                        exclude: ['password', 'image']
+                        exclude: ['password']
                     },
                     include: [
                         {
@@ -114,9 +118,47 @@ let getDoctorsDetailByIdServiceNode = (inputId) => {
         }
     })
 }
+
+let editDoctorMarkdownServiceNode = (data) => {
+    console.log('>>>check data:', data)
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.doctorId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameters'
+                })
+            } else {
+                let userToEdit = await db.Markdown.findOne({
+                    where: { doctorId: data.doctorId },
+                    raw: false,
+                })
+                console.log('>>>user', userToEdit)
+                if (!userToEdit) {
+                    resolve({
+                        errCode: 2,
+                        errMessage: 'User is not found'
+                    })
+                } else {
+                    userToEdit.HTMLContent = data.HTMLContent;
+                    userToEdit.markdownContent = data.markdownContent;
+                    userToEdit.description = data.description;
+                    await userToEdit.save()
+                    resolve({
+                        errCode: 0,
+                        errMessage: "User has been updated"
+                    });
+                }
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorServiceNode,
     getAllDoctorsSeviceNode,
     postDoctorsInfoServiceNode,
     getDoctorsDetailByIdServiceNode,
+    editDoctorMarkdownServiceNode,
 }
