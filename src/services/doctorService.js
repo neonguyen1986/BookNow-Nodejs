@@ -183,17 +183,9 @@ let bulkCreateScheduleServiceNode = (data) => {
                     attributes: ['timeType', 'date', 'doctorId', 'maxNumber']
                 })
 
-                //convert date
-                if (existing?.length > 0) {
-                    existing = existing.map(item => {
-                        item.date = new Date(item.date).getTime();
-                        return item
-                    })
-                }
-
                 //compare data from DB and React
                 let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                    return a.timeType === b.timeType && a.date === b.date;
+                    return a.timeType === b.timeType && +a.date === +b.date;
                 })
                 // console.log('check toCreate:', toCreate)
                 if (toCreate?.length > 0) {
@@ -211,6 +203,34 @@ let bulkCreateScheduleServiceNode = (data) => {
         }
     })
 }
+
+let getScheduleByDateServiceNode = (doctorId, date) => {
+    console.log('>>>check doctorId, date:', doctorId, date)
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameter'
+                })
+            } else {
+                let dataSchedule = await db.Schedule.findAll({
+                    where: {
+                        doctorId: doctorId,
+                        date: date,
+                    }
+                })
+                if (!dataSchedule) dataSchedule = []
+                resolve({
+                    errCode: 0,
+                    data: dataSchedule
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorServiceNode,
     getAllDoctorsSeviceNode,
@@ -218,4 +238,5 @@ module.exports = {
     getDoctorsDetailByIdServiceNode,
     editDoctorMarkdownServiceNode,
     bulkCreateScheduleServiceNode,
+    getScheduleByDateServiceNode,
 }
