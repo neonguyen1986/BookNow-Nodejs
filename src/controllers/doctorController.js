@@ -66,10 +66,24 @@ let putDoctorsInfo = async (req, res) => {
         })
     }
 }
+
+let bulkCreateSchedule = async (req, res) => {
+    try {
+        let schedule = await doctorService.bulkCreateScheduleServiceNode(req.body)
+        return res.status(200).json(schedule)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        })
+    }
+}
 module.exports = {
     getTopDoctor,
     getAllDoctors,
     postDoctorsInfo,
     getDoctorsDetailById,
     putDoctorsInfo,
+    bulkCreateSchedule,
 }

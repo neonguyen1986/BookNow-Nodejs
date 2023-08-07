@@ -105,6 +105,7 @@ let getAllUsers = (userId) => {
 
 //================CREATE==================
 let createNewUser = (data) => {
+    // console.log('======check data', data)
     return new Promise(async (resolve, reject) => {
         try {
             //check email availability

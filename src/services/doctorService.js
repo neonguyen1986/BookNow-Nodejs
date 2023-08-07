@@ -1,5 +1,10 @@
 import { resolveInclude } from 'ejs'
 import db from '../models/index'
+import _ from 'lodash'
+
+require('dotenv').config();
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
+
 
 //===================GET DOCTORS FOR OUSTANDING DOCTORS====================
 
@@ -155,10 +160,62 @@ let editDoctorMarkdownServiceNode = (data) => {
         }
     })
 }
+let bulkCreateScheduleServiceNode = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // console.log('check data', data)
+            if (!data.arrSchedule || !data.doctorId || !data.formatedDate) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameter'
+                })
+            } else {
+                let schedule = data.arrSchedule
+                if (schedule?.length > 0) {
+                    schedule = schedule.map(item => {
+                        item.maxNumber = MAX_NUMBER_SCHEDULE;
+                        return item;
+                    })
+                }
+                //get existing in DB
+                let existing = await db.Schedule.findAll({
+                    where: { doctorId: data.doctorId, date: data.formatedDate },
+                    attributes: ['timeType', 'date', 'doctorId', 'maxNumber']
+                })
+
+                //convert date
+                if (existing?.length > 0) {
+                    existing = existing.map(item => {
+                        item.date = new Date(item.date).getTime();
+                        return item
+                    })
+                }
+
+                //compare data from DB and React
+                let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+                    return a.timeType === b.timeType && a.date === b.date;
+                })
+                // console.log('check toCreate:', toCreate)
+                if (toCreate?.length > 0) {
+                    await db.Schedule.bulkCreate(toCreate)
+                }
+
+                //Bulk schedule
+                resolve({
+                    errCode: 0,
+                    errMessage: 'create successful'
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorServiceNode,
     getAllDoctorsSeviceNode,
     postDoctorsInfoServiceNode,
     getDoctorsDetailByIdServiceNode,
     editDoctorMarkdownServiceNode,
+    bulkCreateScheduleServiceNode,
 }
