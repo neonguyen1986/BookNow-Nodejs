@@ -56,22 +56,85 @@ let getAllDoctorsSeviceNode = () => {
         }
     })
 }
-//===================CREATE DOCTOR IN MARKDOWN DB====================
+//===================CREATE DOCTOR IN MARKDOWN + DOCTOR_INFO DB====================
+
 let postDoctorsInfoServiceNode = (inputData) => {
     return new Promise(async (resolve, reject) => {
+        console.log('====================')
+        console.log(inputData)
         try {
-            if (!inputData.doctorId || !inputData.HTMLContent || !inputData.markdownContent) {
+            if (!inputData.doctorId ||
+                !inputData.HTMLContent ||
+                !inputData.markdownContent ||
+                !inputData.selectedPrice ||
+                !inputData.selectedPayment ||
+                !inputData.selectedProvince ||
+                !inputData.clinicName ||
+                !inputData.clinicAddress ||
+                !inputData.note
+            ) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing Parameter'
                 })
             } else {
-                await db.Markdown.create({
-                    HTMLContent: inputData.HTMLContent,
-                    markdownContent: inputData.markdownContent,
-                    description: inputData.description,
-                    doctorId: inputData.doctorId,
+                //update data to Markdown
+                let markdownInfo = await db.Markdown.findOne({
+                    where: {
+                        doctorId: inputData.doctorId,
+                    },
+                    raw: false
                 })
+                if (markdownInfo) {
+                    //update
+                    markdownInfo.doctorId = inputData.doctorId;
+                    markdownInfo.HTMLContent = inputData.HTMLContent;
+                    markdownInfo.markdownContent = inputData.markdownContent;
+                    markdownInfo.description = inputData.description;
+                    await markdownInfo.save()
+                } else {
+                    //create
+                    await db.Markdown.create({
+                        doctorId: inputData.doctorId,
+                        HTMLContent: inputData.HTMLContent,
+                        markdownContent: inputData.markdownContent,
+                        description: inputData.description,
+                    })
+                }
+
+                //update data to doctor_info
+                let doctorInfo = await db.Doctor_Info.findOne({
+                    where: {
+                        doctorId: inputData.doctorId,
+                    },
+                    raw: false
+
+                })
+                console.log('>>>doctorInfo', doctorInfo)
+                if (doctorInfo) {
+                    //update
+                    doctorInfo.doctorId = inputData.doctorId;
+                    doctorInfo.priceId = inputData.selectedPrice;
+                    doctorInfo.provinceId = inputData.selectedProvince;
+                    doctorInfo.paymentId = inputData.selectedPayment;
+                    doctorInfo.nameClinic = inputData.clinicName;
+                    doctorInfo.addressClinic = inputData.clinicAddress;
+                    doctorInfo.note = inputData.note;
+                    await doctorInfo.save()
+                } else {
+                    //create
+                    await db.Doctor_Info.create({
+                        doctorId: inputData.doctorId,
+                        priceId: inputData.selectedPrice,
+                        provinceId: inputData.selectedProvince,
+                        paymentId: inputData.selectedPayment,
+                        nameClinic: inputData.clinicName,
+                        addressClinic: inputData.clinicAddress,
+                        note: inputData.note,
+                    })
+                }
+
+
                 resolve({
                     errCode: 0,
                     errMessage: 'Save doctors info success'
