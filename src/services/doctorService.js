@@ -272,7 +272,7 @@ let bulkCreateScheduleServiceNode = (data) => {
 }
 
 let getScheduleByDateServiceNode = (doctorId, date) => {
-    console.log('>>>check doctorId, date:', doctorId, date)
+    // console.log('>>>check doctorId, date:', doctorId, date)
     return new Promise(async (resolve, reject) => {
         try {
             if (!doctorId || !date) {
@@ -304,6 +304,38 @@ let getScheduleByDateServiceNode = (doctorId, date) => {
         }
     })
 }
+let getDoctorsMoreInfoByIdServiceNode = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameters'
+                })
+            } else {
+                let data = await db.Doctor_Info.findOne({
+                    where: { doctorId: inputId },
+                    attributes: { exclude: ['id', 'doctorId'] },
+                    include: [
+                        { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                    ],
+                    raw: true,
+                    nest: true,
+                })
+                if (!data) data = {}
+                else
+                    resolve({
+                        errCode: 0,
+                        data: data
+                    })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorServiceNode,
     getAllDoctorsSeviceNode,
@@ -312,4 +344,5 @@ module.exports = {
     editDoctorMarkdownServiceNode,
     bulkCreateScheduleServiceNode,
     getScheduleByDateServiceNode,
+    getDoctorsMoreInfoByIdServiceNode,
 }
