@@ -1,6 +1,6 @@
 import { resolveInclude } from 'ejs'
 import db from '../models/index'
-import _ from 'lodash'
+import _, { includes } from 'lodash'
 
 require('dotenv').config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
@@ -145,7 +145,7 @@ let postDoctorsInfoServiceNode = (inputData) => {
         }
     })
 }
-//===================GET DOCTORS WITH USER INFO; MARKDOWN; POSITION NAME====================
+//===================GET DOCTORS WITH USER INFO; MARKDOWN; POSITION NAME - DOCTOR INFO====================
 let getDoctorsDetailByIdServiceNode = (inputId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -163,13 +163,17 @@ let getDoctorsDetailByIdServiceNode = (inputId) => {
                         exclude: ['password']
                     },
                     include: [
+                        { model: db.Markdown, attributes: ['description', 'HTMLContent', 'markdownContent'] },
+                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
                         {
-                            model: db.Markdown,
-                            attributes: ['description', 'HTMLContent', 'markdownContent']
-                        },
-                        {
-                            model: db.Allcode, as: 'positionData',
-                            attributes: ['valueEn', 'valueVi']
+                            model: db.Doctor_Info,
+                            // attributes: { exclude: ['id', 'doctorId'] },
+                            include: [
+                                { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+
                         },
 
                     ],
