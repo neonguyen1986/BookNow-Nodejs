@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         statusId: DataTypes.STRING,
         doctorId: DataTypes.INTEGER, // chính là ID của bảng User
         patientId: DataTypes.INTEGER,
-        date: DataTypes.DATE, //date là kiểu timestamp, nghĩa là ngày được lưu dưới 1 chuỗi số
+        date: DataTypes.STRING, //date là kiểu timestamp, nghĩa là ngày được lưu dưới 1 chuỗi số
         timeType: DataTypes.STRING,
     }, {
         sequelize,
