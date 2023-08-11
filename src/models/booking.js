@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         patientId: DataTypes.INTEGER,
         date: DataTypes.STRING, //date là kiểu timestamp, nghĩa là ngày được lưu dưới 1 chuỗi số
         timeType: DataTypes.STRING,
+        token: DataTypes.STRING,
     }, {
         sequelize,
         modelName: 'Booking',

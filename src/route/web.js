@@ -57,6 +57,9 @@ let initWebRoutes = (app) => {
     //Tạo API cho patient
     router.post('/api/patient-book-appointment', patientControler.postBookAppointment)
 
+    //verify book appointment
+    router.post('/api/verify-book-appointment', patientControler.postVerifyBookAppointment)
+
     return app.use("/", router)
 }
 

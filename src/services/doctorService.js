@@ -286,10 +286,10 @@ let getScheduleByDateServiceNode = (doctorId, date) => {
                         doctorId: doctorId,
                         date: date,
                     },
-                    include: [{
-                        model: db.Allcode, as: 'timeTypeData',
-                        attributes: ['valueEn', 'valueVi']
-                    }],
+                    include: [
+                        { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.User, as: 'fullName', attributes: ['firstName', 'lastName'] },
+                    ],
                     raw: true,
                     nest: true
                 })
