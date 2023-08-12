@@ -71,7 +71,8 @@ let postDoctorsInfoServiceNode = (inputData) => {
                 !inputData.selectedProvince ||
                 !inputData.clinicName ||
                 !inputData.clinicAddress ||
-                !inputData.note
+                !inputData.note ||
+                !inputData.selectedSpecialty
             ) {
                 resolve({
                     errCode: 1,
@@ -110,7 +111,7 @@ let postDoctorsInfoServiceNode = (inputData) => {
                     raw: false
 
                 })
-                console.log('>>>doctorInfo', doctorInfo)
+                // console.log('>>>doctorInfo', doctorInfo)
                 if (doctorInfo) {
                     //update
                     doctorInfo.doctorId = inputData.doctorId;
@@ -120,6 +121,8 @@ let postDoctorsInfoServiceNode = (inputData) => {
                     doctorInfo.nameClinic = inputData.clinicName;
                     doctorInfo.addressClinic = inputData.clinicAddress;
                     doctorInfo.note = inputData.note;
+                    doctorInfo.specialtyId = inputData.selectedSpecialty;
+                    doctorInfo.clinicId = inputData.selectedClinic;
                     await doctorInfo.save()
                 } else {
                     //create
@@ -131,6 +134,8 @@ let postDoctorsInfoServiceNode = (inputData) => {
                         nameClinic: inputData.clinicName,
                         addressClinic: inputData.clinicAddress,
                         note: inputData.note,
+                        specialtyId: inputData.selectedSpecialty,
+                        clinicId: inputData.selectedClinic,
                     })
                 }
 
@@ -172,6 +177,7 @@ let getDoctorsDetailByIdServiceNode = (inputId) => {
                                 { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
                                 { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
                                 { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Specialty, as: 'specialtyName', attributes: ['name'] },
                             ]
 
                         },
