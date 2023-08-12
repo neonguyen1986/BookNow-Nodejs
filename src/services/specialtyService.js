@@ -52,6 +52,33 @@ let postCreateNewSpecialtyServiceNode = async (data) => {
         }
     })
 }
+
+let getAllSpecialtyServiceNode = async () => {
+    // console.log('============================')
+    // console.log('check data:', data)
+    // console.log('============================')
+    return new Promise(async (resolve, reject) => {
+        try {
+            let specialties = await db.Specialty.findAll()
+            console.log('=========check Specialty:', specialties)
+            if (specialties?.length > 0) {
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Get specialty success',
+                    data: specialties
+                })
+            } else {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'Fail to get specialty',
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     postCreateNewSpecialtyServiceNode,
+    getAllSpecialtyServiceNode,
 }
