@@ -59,24 +59,37 @@ let getAllDoctorsSeviceNode = () => {
 //===================CREATE DOCTOR IN MARKDOWN + DOCTOR_INFO DB====================
 
 let postDoctorsInfoServiceNode = (inputData) => {
+
     return new Promise(async (resolve, reject) => {
-        console.log('====================')
-        console.log(inputData)
+        // console.log('====================')
+        // console.log(inputData)
         try {
-            if (!inputData.doctorId ||
-                !inputData.HTMLContent ||
-                !inputData.markdownContent ||
-                !inputData.selectedPrice ||
-                !inputData.selectedPayment ||
-                !inputData.selectedProvince ||
-                !inputData.clinicName ||
-                !inputData.clinicAddress ||
-                !inputData.note ||
-                !inputData.selectedSpecialty
-            ) {
+            let check = true;
+            let errValue = '';
+            let tempArr = [
+                inputData.doctorId, 'doctorID',
+                inputData.HTMLContent, 'HTMLContent',
+                inputData.markdownContent, 'markdownContent',
+                inputData.selectedPrice, 'Price',
+                inputData.selectedPayment, 'Payment',
+                inputData.selectedProvince, 'Province',
+                inputData.clinicName, 'clinicName',
+                inputData.clinicAddress, 'clinicAddress',
+                inputData.note, 'note',
+                inputData.selectedSpecialty, 'Specialty'
+            ]
+            //text element for Missing display
+            for (let i = 0; i < tempArr.length; i = i + 2) {
+                if (!tempArr[i]) {
+                    check = false;
+                    errValue = tempArr[i + 1]
+                    break;
+                }
+            }
+            if (check === false) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'Missing Parameter'
+                    errMessage: `Missing Parameter ${errValue}`
                 })
             } else {
                 //update data to Markdown
@@ -388,6 +401,55 @@ let getDoctorsProfileByIdServiceNode = (inputId) => {
     })
 }
 
+let getListPatientsbyIdDateServiceNode = (doctorId, date) => {
+    console.log('==================================')
+    console.log('check patient:', doctorId, date)
+    console.log('==================================')
+
+    return new Promise(async (resolve, reject) => {
+        //get date, ID from 'bookings'
+        //get patients info from User
+        //get date from Allcode
+        //date, time type (link AllCode), 
+        //user:email, firstName, address, gender (link with Allcode),phoneNumb,
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameters'
+                })
+            } else {
+                let data = await db.Booking.findAll({
+                    where: {
+                        statusId: 'S2',
+                        doctorId: doctorId,
+                        date: date
+                    },
+                    attributes: { exclude: ['id'] },
+                    include: [
+                        { model: db.Allcode, as: 'timeBooking', attributes: ['valueEn', 'valueVi'] },
+                        {
+                            model: db.User, as: 'patientInfo', attributes: ['email', 'firstName', 'gender', 'address', 'phoneNumber'],
+                            include: [
+                                { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+                        },
+
+                    ],
+                    raw: true,
+                    nest: true,
+                })
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorServiceNode,
     getAllDoctorsSeviceNode,
@@ -398,4 +460,5 @@ module.exports = {
     getScheduleByDateServiceNode,
     getDoctorsMoreInfoByIdServiceNode,
     getDoctorsProfileByIdServiceNode,
+    getListPatientsbyIdDateServiceNode,
 }

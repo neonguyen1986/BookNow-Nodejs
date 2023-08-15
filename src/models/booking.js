@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Booking.belongsTo(models.Allcode, { foreignKey: 'timeType', targetKey: 'keyMap', as: 'timeBooking' })
+            Booking.belongsTo(models.User, { foreignKey: 'patientId', targetKey: 'id', as: 'patientInfo' })
+
         }
     };
     Booking.init({
@@ -19,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         patientId: DataTypes.INTEGER,
         date: DataTypes.STRING, //date là kiểu timestamp, nghĩa là ngày được lưu dưới 1 chuỗi số
         timeType: DataTypes.STRING,
+        fileLink: DataTypes.STRING,
         token: DataTypes.STRING,
     }, {
         sequelize,

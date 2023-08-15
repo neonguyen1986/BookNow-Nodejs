@@ -23,6 +23,9 @@ module.exports = {
             timeType: {
                 type: Sequelize.STRING
             },
+            fileLink: {
+                type: Sequelize.STRING
+            },
             token: {
                 type: Sequelize.STRING
             },

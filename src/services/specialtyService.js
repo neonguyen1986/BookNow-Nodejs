@@ -60,7 +60,7 @@ let getAllSpecialtyServiceNode = async () => {
     return new Promise(async (resolve, reject) => {
         try {
             let specialties = await db.Specialty.findAll()
-            console.log('=========check Specialty:', specialties)
+            // console.log('=========check Specialty:', specialties)
             if (specialties?.length > 0) {
                 resolve({
                     errCode: 0,
@@ -78,7 +78,61 @@ let getAllSpecialtyServiceNode = async () => {
         }
     })
 }
+
+let getDetailSpecialtyByIdLocationServiceNode = async (id, locationId) => {
+    //id of Specialty; locationId from doctor_info
+
+    console.log('============================')
+    console.log('check id, location', id, locationId)
+    console.log('============================')
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id || !locationId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameters'
+                })
+            } else {
+                let data = [];
+                let dataSpecialty = await db.Specialty.findOne({
+                    where: { id: id }, attributes: ['descriptionHTML', 'descriptionMarkdown']
+                }
+                )
+                data.push(dataSpecialty)
+                if (locationId === "ALL") {
+                    let dataAllLocation = await db.Doctor_Info.findAll(
+                        { where: { specialtyId: id }, attributes: ['provinceId', 'doctorId'] }
+                    )
+                    data.push(dataAllLocation)
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Get doctors in all province success',
+                        data: data
+                    })
+                } else {
+                    let dataOneLocation = await db.Doctor_Info.findAll({
+                        where: {
+                            specialtyId: id,
+                            provinceId: locationId,
+                        }, attributes: ['provinceId', 'doctorId']
+                    }
+                    )
+                    console.log(dataOneLocation)
+                    data.push(dataOneLocation)
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Get doctors in same province success',
+                        data: data
+                    })
+                }
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     postCreateNewSpecialtyServiceNode,
     getAllSpecialtyServiceNode,
+    getDetailSpecialtyByIdLocationServiceNode,
 }

@@ -1,3 +1,4 @@
+import moment from 'moment';
 require('dotenv').config();
 // import nodemailer from 'nodemailer'
 const nodemailer = require("nodemailer");
@@ -40,12 +41,13 @@ let sendSimpleEmail = (dataSend) => {
 let getBodyHTML = (dataSend) => {
     let result = ''
     if (dataSend.language === 'en') {
+        let date = moment.unix(+dataSend.date / 1000).locale('en').format('ddd-MM/DD/YYYY')
         result =
             ` 
         <h3>Hello ${dataSend.patientName}</h3>
         <p>You received this email because you booked a medical appointment on Bookingcare</p>
         <p>Schedule information:</p>
-        <div><b>Time:${dataSend.time.valueEn} - ${dataSend.date.valueEn}</b></div>
+        <div><b>Time:${dataSend.time} - ${date}</b></div>
         <div><b>Doctor:${dataSend.doctorName.firstName} ${dataSend.doctorName.lastName}</b></div>
         <p>Confirm your appointment with the link below</p>
         <div>
@@ -54,12 +56,13 @@ let getBodyHTML = (dataSend) => {
         <div> Thank you for booking an appointment</div>
         `
     } else {
+        let date = moment.unix(+dataSend.date / 1000).locale('vi').format('ddd - DD/MM/YYYY')
         result =
             ` 
         <h3>Xin chào ${dataSend.patientName}</h3> 
         <p>Bạn nhận được email này vì đã đặt lịch khám bệnh trên Bookingcare</p>
         <p>Thông tin đặt lịch:</p>
-        <div><b>Thời gian:${dataSend.time.valueVi} - ${dataSend.date.valueVi}</b></div>
+        <div><b>Thời gian:${dataSend.time} - ${date}</b></div>
         <div><b>Bác sĩ:${dataSend.doctorName.lastName} ${dataSend.doctorName.firstName}</b></div>
         <p>Xác nhận thủ tục đặt lịch khám với đường link bên dưới</p>
         <div>

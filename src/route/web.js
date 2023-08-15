@@ -53,6 +53,8 @@ let initWebRoutes = (app) => {
 
     //API get DoctorProfile
     router.get('/api/get-doctor-profile-by-id', doctorController.getDoctorProfileById)
+    //API get list patients
+    router.get('/api/get-list-patients-byIdDate', doctorController.getListPatientsbyIdDate)
 
 
     //Tạo API cho patient
@@ -66,6 +68,9 @@ let initWebRoutes = (app) => {
 
     //get Specialty Data
     router.get('/api/get-all-specialty', specialtyController.getAllSpecialty)
+
+    //get API for detail Specialty
+    router.get('/api/get-detail-specialty-by-id-location', specialtyController.getDetailSpecialtyByIdLocation)
 
 
     return app.use("/", router)
