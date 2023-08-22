@@ -36,6 +36,7 @@ let postBookAppointmentServiceNode = async (inputData) => {
                 //gọi hàm gởi email
                 let tokenUUID = uuidv4();
                 await emailService.sendSimpleEmail({
+                    EMAIL_TYPE: 'BookingInfo',
                     receiverEmail: inputData.email,
                     patientName: inputData.fullName,
                     time: inputData.timeBooked,

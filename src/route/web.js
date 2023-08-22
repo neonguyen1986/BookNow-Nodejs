@@ -72,6 +72,11 @@ let initWebRoutes = (app) => {
     //get API for detail Specialty
     router.get('/api/get-detail-specialty-by-id-location', specialtyController.getDetailSpecialtyByIdLocation)
 
+    //Upload files
+    router.post('/api/upload-single-file', doctorController.singleFileUpload, doctorController.postUploadSingleFile)
+
+    //Download/get files from server
+    router.get('/api/download-file', doctorController.getFileDownload)
 
     return app.use("/", router)
 }

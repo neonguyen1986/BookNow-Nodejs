@@ -1,6 +1,9 @@
 import { resolveInclude } from 'ejs'
 import db from '../models/index'
 import _, { includes } from 'lodash'
+import emailService from '../services/emailService'
+import path from 'path'
+import { Op } from 'sequelize'
 
 require('dotenv').config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
@@ -402,9 +405,9 @@ let getDoctorsProfileByIdServiceNode = (inputId) => {
 }
 
 let getListPatientsbyIdDateServiceNode = (doctorId, date) => {
-    console.log('==================================')
-    console.log('check patient:', doctorId, date)
-    console.log('==================================')
+    // console.log('==================================')
+    // console.log('check patient:', doctorId, date)
+    // console.log('==================================')
 
     return new Promise(async (resolve, reject) => {
         //get date, ID from 'bookings'
@@ -421,10 +424,17 @@ let getListPatientsbyIdDateServiceNode = (doctorId, date) => {
             } else {
                 let data = await db.Booking.findAll({
                     where: {
-                        statusId: 'S2',
+                        [Op.or]: [
+                            { statusId: 'S2' },
+                            { statusId: 'S3' }
+                        ],
+
                         doctorId: doctorId,
                         date: date
                     },
+                    order: [
+                        ['statusId', 'ASC'], // ASCending order for column1
+                    ],
                     attributes: { exclude: ['id'] },
                     include: [
                         { model: db.Allcode, as: 'timeBooking', attributes: ['valueEn', 'valueVi'] },
@@ -449,6 +459,106 @@ let getListPatientsbyIdDateServiceNode = (doctorId, date) => {
         }
     })
 }
+let postFileToDBServiceNode = (file, data) => {
+    // console.log('==================================')
+    // console.log('check data SaveFileToDB:', data, token)
+    // console.log('==================================')
+
+    return new Promise(async (resolve, reject) => {
+        console.log('++++++++', file)
+        try {
+            if (!data.token ||
+                !data.patientName ||
+                !data.docFirstName ||
+                !data.docLastName ||
+                !data.email ||
+                !file.path) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameters'
+                })
+            } else {
+
+                let booked = await db.Booking.findOne({
+                    where: { token: data.token },
+                    raw: false
+                })
+
+                if (booked) {
+                    const filePath = `/${file.path.replace(/\\/g, '/')}`;
+                    //path: 'src\\assets\\DoctorPrescription\\16921328071982. Dermatology.jpg',
+
+                    //======save file to DB=======
+                    await emailService.sendSimpleEmail({
+                        EMAIL_TYPE: 'BookingConfirm',
+                        receiverEmail: data.email,
+                        patientName: data.patientName,
+                        docFirstName: data.docFirstName,
+                        date: data.dateBooked,
+                        docLastName: data.docLastName,
+                        language: data.language,
+                        fileName: `Doctor ${data.docFirstName}'s Prescription.pdf`,
+                        path: path.join(__dirname, '..', '..', filePath),
+                    })
+                    //======save file to DB=======
+                    booked.statusId = 'S3';
+                    booked.fileLink = file.filename
+                    await booked.save()
+
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Prescription has been sent to patient'
+                    })
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: 'Missing data from server'
+                    })
+                }
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+let getFileDownloadServiceNode = (token) => {
+    // console.log('==================================')
+    // console.log('check data SaveFileToDB:', data, token)
+    // console.log('==================================')
+
+    return new Promise(async (resolve, reject) => {
+        console.log('=========check token:', token)
+        try {
+            if (!token) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameters'
+                })
+            } else {
+                let booked = await db.Booking.findOne({
+                    where: { token: token }
+                })
+
+                if (booked) {
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Get data from DB success',
+                        'fileName': `${process.env.URL_NODE}/get-public/DoctorPrescription/${booked.fileLink}`
+                    })
+                } else {
+                    resolve({
+                        errCode: 1,
+                        errMessage: 'Token not found in server',
+                    })
+                }
+
+            }
+        }
+        catch (error) {
+            reject(error)
+        }
+    })
+}
 
 module.exports = {
     getTopDoctorServiceNode,
@@ -461,4 +571,6 @@ module.exports = {
     getDoctorsMoreInfoByIdServiceNode,
     getDoctorsProfileByIdServiceNode,
     getListPatientsbyIdDateServiceNode,
+    postFileToDBServiceNode,
+    getFileDownloadServiceNode,
 }

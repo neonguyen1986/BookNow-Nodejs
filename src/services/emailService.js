@@ -19,12 +19,31 @@ let sendSimpleEmail = (dataSend) => {
     // async..await is not allowed in global scope, must use a wrapper
     async function main() {
         // send mail with defined transport object
+        let tempSubject = '';
+        let tempHTML = '';
+        switch (dataSend.EMAIL_TYPE) {
+            case 'BookingInfo':
+                tempSubject = dataSend.language === 'vi' ? "Thông tin đặt lịch khám" : "Booking information",
+                    tempHTML = getBodyHTMLBookingInfo(dataSend)
+                break;
+            case 'BookingConfirm':
+                tempSubject = dataSend.language === 'vi' ? "Đơn thuốc từ bác sĩ" : "Doctor's Prescription",
+                    tempHTML = getBodyHTMLBookingConfirm(dataSend)
+                break;
+            default:
+                console.log('Missing Parameters');
+        }
+
         const info = await transporter.sendMail({
             from: '"Nam Tran 👻" <trannam.shop@gmail.com', // sender address
             to: dataSend.receiverEmail,//"bar@example.com, baz@example.com", // list of receivers
-            subject: dataSend.language === 'vi' ? "Thông tin đặt lịch khám" : "Booking information", // Subject line
+            subject: tempSubject,
             //text: , // plain text body
-            html: getBodyHTML(dataSend), // html body
+            html: tempHTML, // html body
+            attachments: [{
+                filename: dataSend.fileName,
+                path: dataSend.path,
+            }],
         });
 
         console.log("Message sent: %s", info.messageId);
@@ -38,7 +57,7 @@ let sendSimpleEmail = (dataSend) => {
     }
     main().catch(console.error);
 }
-let getBodyHTML = (dataSend) => {
+let getBodyHTMLBookingInfo = (dataSend) => {
     let result = ''
     if (dataSend.language === 'en') {
         let date = moment.unix(+dataSend.date / 1000).locale('en').format('ddd-MM/DD/YYYY')
@@ -69,6 +88,30 @@ let getBodyHTML = (dataSend) => {
             <a href='${dataSend.redirectLink}' target='_blank'>Click here</a>
         </div>
         <div> Cảm ơn bạn đã đặt lịch khám bệnh</div>
+        `
+    }
+    return result
+}
+
+let getBodyHTMLBookingConfirm = (dataSend) => {
+    let result = ''
+    if (dataSend.language === 'en') {
+        result =
+            ` 
+        <h3>Dear ${dataSend.patientName}</h3>
+        <p>Below are the results of your medical examination<p>
+        <div><b>Doctor:${dataSend.docFirstName} ${dataSend.docLastName}</b></div>
+        <p>Please check the attachment for Doctor's Prescription</p>
+        <div> Thank you for choosing Booking Care</div>
+        `
+    } else {
+        result =
+            ` 
+        <h3>Xin chào ${dataSend.patientName}</h3>
+        <p>Dưới đây là thông tin kết quả khám bệnh của bạn<p>
+        <div><b>Bác sĩ:${dataSend.docLastName} ${dataSend.docFirstName}</b></div>
+        <p>Xin vui lòng kiểm tra toa thuốc của bác sĩ bên dưới</p>
+        <div> Cám ơn bạn vì đã lựa chọn Booking Care</div>
         `
     }
     return result
