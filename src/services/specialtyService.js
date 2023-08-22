@@ -82,9 +82,9 @@ let getAllSpecialtyServiceNode = async () => {
 let getDetailSpecialtyByIdLocationServiceNode = async (id, locationId) => {
     //id of Specialty; locationId from doctor_info
 
-    console.log('============================')
-    console.log('check id, location', id, locationId)
-    console.log('============================')
+    // console.log('============================')
+    // console.log('check id, location', id, locationId)
+    // console.log('============================')
     return new Promise(async (resolve, reject) => {
         try {
             if (!id || !locationId) {
