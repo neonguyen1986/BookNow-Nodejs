@@ -488,7 +488,7 @@ let postFileToDBServiceNode = (file, data) => {
                     const filePath = `/${file.path.replace(/\\/g, '/')}`;
                     //path: 'src\\assets\\DoctorPrescription\\16921328071982. Dermatology.jpg',
 
-                    //======save file to DB=======
+                    //======use file to send Email=======
                     await emailService.sendSimpleEmail({
                         EMAIL_TYPE: 'BookingConfirm',
                         receiverEmail: data.email,

@@ -8,26 +8,15 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            name: {
-                type: Sequelize.STRING
-            },
-            image: {
-                type: Sequelize.BLOB('long')
-            },
-            descriptionHTML: {
-                type: Sequelize.TEXT
-            },
-            descriptionMarkdown: {
-                type: Sequelize.TEXT
-            },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            }
+            nameEn: { allowNull: false, type: Sequelize.STRING },
+            nameFr: { allowNull: false, type: Sequelize.STRING },
+            image: { allowNull: false, type: Sequelize.STRING, },
+            descriptionHTML_En: { allowNull: false, type: Sequelize.TEXT },
+            descriptionHTML_Fr: { allowNull: false, type: Sequelize.TEXT },
+            descriptionMarkdown_En: { allowNull: false, type: Sequelize.TEXT },
+            descriptionMarkdown_Fr: { allowNull: false, type: Sequelize.TEXT },
+            createdAt: { allowNull: false, type: Sequelize.DATE },
+            updatedAt: { allowNull: false, type: Sequelize.DATE }
         });
     },
     down: async (queryInterface, Sequelize) => {

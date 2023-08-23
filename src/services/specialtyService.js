@@ -5,16 +5,18 @@ require('dotenv').config();
 import { v4 as uuidv4 } from 'uuid'
 import { asIs } from 'sequelize';
 
-let postCreateNewSpecialtyServiceNode = async (data) => {
-    // console.log('============================')
-    // console.log('check data:', data)
-    // console.log('============================')
+let postCreateNewSpecialtyServiceNode = async (file, data) => {
+    // console.log('============================file,', file)
+    // console.log('============================data', data)
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.specialtyName ||
-                !data.markdownSpecialty ||
-                !data.HTMLSpecialty ||
-                !data.specialtyImage
+            if (!data.specialtyNameEn ||
+                !data.specialtyNameFr ||
+                !data.markdownSpecialtyEn ||
+                !data.markdownSpecialtyFr ||
+                !data.HTMLSpecialtyEn ||
+                !data.HTMLSpecialtyFr ||
+                !file
             ) {
                 resolve({
                     errCode: 1,
@@ -23,13 +25,17 @@ let postCreateNewSpecialtyServiceNode = async (data) => {
             } else {
                 let createNew = await db.Specialty.findOrCreate({
                     where: {
-                        name: data.specialtyName
+                        nameEn: data.specialtyNameEn,
+                        nameFr: data.specialtyNameFr
                     },
                     defaults: {
-                        name: data.specialtyName,
-                        descriptionMarkdown: data.markdownSpecialty,
-                        descriptionHTML: data.HTMLSpecialty,
-                        image: data.specialtyImage,
+                        nameEn: data.specialtyNameEn,
+                        nameFr: data.specialtyNameFr,
+                        descriptionMarkdown_En: data.markdownSpecialtyEn,
+                        descriptionMarkdown_Fr: data.markdownSpecialtyFr,
+                        descriptionHTML_En: data.HTMLSpecialtyEn,
+                        descriptionHTML_Fr: data.HTMLSpecialtyFr,
+                        image: file.filename
                     },
                     raw: true,
                 })
@@ -61,6 +67,12 @@ let getAllSpecialtyServiceNode = async () => {
         try {
             let specialties = await db.Specialty.findAll()
             // console.log('=========check Specialty:', specialties)
+            specialties = specialties.map(item => {
+                return {
+                    ...item,
+                    image: `${process.env.URL_NODE}/get-public/SpecialyImage/${item.image}`
+                }
+            })
             if (specialties?.length > 0) {
                 resolve({
                     errCode: 0,

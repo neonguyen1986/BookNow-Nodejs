@@ -64,7 +64,7 @@ let initWebRoutes = (app) => {
     router.post('/api/verify-book-appointment', patientControler.postVerifyBookAppointment)
 
     //create Specialty table data
-    router.post('/api/create-new-specialty', specialtyController.postCreateNewSpecialty)
+    router.post('/api/create-new-specialty', specialtyController.singleImageUpload, specialtyController.postCreateNewSpecialty)
 
     //get Specialty Data
     router.get('/api/get-all-specialty', specialtyController.getAllSpecialty)
