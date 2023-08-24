@@ -193,7 +193,7 @@ let getDoctorsDetailByIdServiceNode = (inputId) => {
                                 { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueFr'] },
                                 { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueFr'] },
                                 { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueFr'] },
-                                { model: db.Specialty, as: 'specialtyName', attributes: ['name'] },
+                                { model: db.Specialty, as: 'specialtyName', attributes: ['nameEn', 'nameFr'] },
                             ]
 
                         },
