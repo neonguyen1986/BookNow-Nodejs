@@ -51,16 +51,18 @@ const singleImageUpload = multer({ storage: storageEngine, fileFilter: imageFilt
 
 
 //----config Multer
-let postCreateNewSpecialty = (req, res) => {
+let postCreateEditNewSpecialty = (req, res) => {
     //--token from React
     // console.log('---------------req:', req.body)
     let data = {
+        id: req.body.id,
         specialtyNameEn: req.body.specialtyNameEn,
         specialtyNameFr: req.body.specialtyNameFr,
         markdownSpecialtyEn: req.body.markdownSpecialtyEn,
         markdownSpecialtyFr: req.body.markdownSpecialtyFr,
         HTMLSpecialtyEn: req.body.HTMLSpecialtyEn,
         HTMLSpecialtyFr: req.body.HTMLSpecialtyFr,
+        isEdit: req.body.isEdit,
     }
     singleImageUpload(req, res, async function (err) {
         if (req.fileValidationError) {
@@ -76,7 +78,7 @@ let postCreateNewSpecialty = (req, res) => {
         try {
             // console.log('---------------req:', req.body)
 
-            let info = await specialtyService.postCreateNewSpecialtyServiceNode(req.file, data);
+            let info = await specialtyService.postCreateEditNewSpecialtyServiceNode(req.file, data);
             return res.status(200).json(info)
         } catch (error) {
             console.log(error)
@@ -89,10 +91,22 @@ let postCreateNewSpecialty = (req, res) => {
     });
 }
 // ====================End Upload single file Multer====================
-
-
+let deleteSpecialtyById = async (req, res) => {
+    try {
+        // console.log('=============================', req.body)
+        let data = await specialtyService.deleteSpecialtyByIdServiceNode(req.body.id);
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        })
+    }
+}
 module.exports = {
-    postCreateNewSpecialty,
+    postCreateEditNewSpecialty,
+    deleteSpecialtyById,
     getAllSpecialty,
     getDetailSpecialtyByIdLocation,
     singleImageUpload,

@@ -64,7 +64,12 @@ let initWebRoutes = (app) => {
     router.post('/api/verify-book-appointment', patientControler.postVerifyBookAppointment)
 
     //create Specialty table data
-    router.post('/api/create-new-specialty', specialtyController.singleImageUpload, specialtyController.postCreateNewSpecialty)
+    router.post('/api/create-edit-new-specialty', specialtyController.singleImageUpload, specialtyController.postCreateEditNewSpecialty)
+
+    //delete Specialty data
+    router.delete('/api/delete-specialty-by-id', specialtyController.deleteSpecialtyById)
+
+    //edit Specialty
 
     //get Specialty Data
     router.get('/api/get-all-specialty', specialtyController.getAllSpecialty)
