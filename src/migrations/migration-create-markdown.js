@@ -8,38 +8,16 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            HTMLContent: {
-                allowNull: false,
-                type: Sequelize.TEXT('long')
-            },
-            markdownContent: {
-                allowNull: false,
-                type: Sequelize.TEXT('long')
-            },
-            description: {
-                allowNull: true,
-                type: Sequelize.TEXT('long')
-            },
-            doctorId: {
-                allowNull: true,
-                type: Sequelize.INTEGER
-            },
-            specialtyId: {
-                allowNull: true,
-                type: Sequelize.INTEGER
-            },
-            clinicId: {
-                allowNull: true,
-                type: Sequelize.INTEGER
-            },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            }
+            doctorId: { allowNull: false, type: Sequelize.INTEGER },
+            specialtyId: { allowNull: false, type: Sequelize.INTEGER },
+            descriptionEn: { allowNull: false, type: Sequelize.TEXT },
+            descriptionFr: { allowNull: false, type: Sequelize.TEXT },
+            HTMLContentEn: { allowNull: false, type: Sequelize.TEXT },
+            HTMLContentFr: { allowNull: false, type: Sequelize.TEXT },
+            markdownContentEn: { allowNull: false, type: Sequelize.TEXT },
+            markdownContentFr: { allowNull: false, type: Sequelize.TEXT },
+            createdAt: { allowNull: false, type: Sequelize.DATE },
+            updatedAt: { allowNull: false, type: Sequelize.DATE }
         });
     },
     down: async (queryInterface, Sequelize) => {

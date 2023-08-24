@@ -71,14 +71,17 @@ let postDoctorsInfoServiceNode = (inputData) => {
             let errValue = '';
             let tempArr = [
                 inputData.doctorId, 'doctorID',
-                inputData.HTMLContent, 'HTMLContent',
-                inputData.markdownContent, 'markdownContent',
+                inputData.HTMLContentEn, 'HTMLContentEn',
+                inputData.HTMLContentFr, 'HTMLContentFr',
+                inputData.markdownContentEn, 'markdownContentEn',
+                inputData.markdownContentFr, 'markdownContentFr',
+                inputData.descriptionEn, 'descriptionEn',
+                inputData.descriptionFr, 'descriptionFr',
                 inputData.selectedPrice, 'Price',
                 inputData.selectedPayment, 'Payment',
                 inputData.selectedProvince, 'Province',
                 inputData.clinicName, 'clinicName',
                 inputData.clinicAddress, 'clinicAddress',
-                inputData.note, 'note',
                 inputData.selectedSpecialty, 'Specialty'
             ]
             //text element for Missing display
@@ -105,17 +108,23 @@ let postDoctorsInfoServiceNode = (inputData) => {
                 if (markdownInfo) {
                     //update
                     markdownInfo.doctorId = inputData.doctorId;
-                    markdownInfo.HTMLContent = inputData.HTMLContent;
-                    markdownInfo.markdownContent = inputData.markdownContent;
-                    markdownInfo.description = inputData.description;
+                    markdownInfo.HTMLContentEn = inputData.HTMLContentEn;
+                    markdownInfo.HTMLContentFr = inputData.HTMLContentFr;
+                    markdownInfo.markdownContentEn = inputData.markdownContentEn;
+                    markdownInfo.markdownContentFr = inputData.markdownContentFr;
+                    markdownInfo.descriptionEn = inputData.descriptionEn;
+                    markdownInfo.descriptionFr = inputData.descriptionFr;
                     await markdownInfo.save()
                 } else {
                     //create
                     await db.Markdown.create({
                         doctorId: inputData.doctorId,
-                        HTMLContent: inputData.HTMLContent,
-                        markdownContent: inputData.markdownContent,
-                        description: inputData.description,
+                        HTMLContentEn: inputData.HTMLContentEn,
+                        HTMLContentFr: inputData.HTMLContentFr,
+                        markdownContentEn: inputData.markdownContentEn,
+                        markdownContentFr: inputData.markdownContentFr,
+                        descriptionEn: inputData.descriptionEn,
+                        descriptionFr: inputData.descriptionFr,
                     })
                 }
 
@@ -136,9 +145,7 @@ let postDoctorsInfoServiceNode = (inputData) => {
                     doctorInfo.paymentId = inputData.selectedPayment;
                     doctorInfo.nameClinic = inputData.clinicName;
                     doctorInfo.addressClinic = inputData.clinicAddress;
-                    doctorInfo.note = inputData.note;
                     doctorInfo.specialtyId = inputData.selectedSpecialty;
-                    doctorInfo.clinicId = inputData.selectedClinic;
                     await doctorInfo.save()
                 } else {
                     //create
@@ -149,9 +156,7 @@ let postDoctorsInfoServiceNode = (inputData) => {
                         paymentId: inputData.selectedPayment,
                         nameClinic: inputData.clinicName,
                         addressClinic: inputData.clinicAddress,
-                        note: inputData.note,
                         specialtyId: inputData.selectedSpecialty,
-                        clinicId: inputData.selectedClinic,
                     })
                 }
 
@@ -184,7 +189,7 @@ let getDoctorsDetailByIdServiceNode = (inputId) => {
                         exclude: ['password']
                     },
                     include: [
-                        { model: db.Markdown, attributes: ['description', 'HTMLContent', 'markdownContent'] },
+                        { model: db.Markdown, attributes: ['descriptionEn', 'descriptionFr', 'HTMLContentEn', 'HTMLContentFr', 'markdownContentEn', 'markdownContentFr'] },
                         { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueFr'] },
                         {
                             model: db.Doctor_Info,
