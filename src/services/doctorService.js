@@ -239,9 +239,12 @@ let editDoctorMarkdownServiceNode = (data) => {
                         errMessage: 'User is not found'
                     })
                 } else {
-                    userToEdit.HTMLContent = data.HTMLContent;
-                    userToEdit.markdownContent = data.markdownContent;
-                    userToEdit.description = data.description;
+                    userToEdit.HTMLContentEn = data.HTMLContentEn;
+                    userToEdit.HTMLContentFr = data.HTMLContentFr;
+                    userToEdit.markdownContentEn = data.markdownContentEn;
+                    userToEdit.markdownContentFr = data.markdownContentFr;
+                    userToEdit.descriptionEn = data.descriptionEn;
+                    userToEdit.descriptionFr = data.descriptionFr;
                     await userToEdit.save()
                     resolve({
                         errCode: 0,
@@ -380,7 +383,7 @@ let getDoctorsProfileByIdServiceNode = (inputId) => {
                         exclude: ['password']
                     },
                     include: [
-                        { model: db.Markdown, attributes: ['description', 'HTMLContent', 'markdownContent'] },
+                        { model: db.Markdown, attributes: ['descriptionEn', 'HTMLContentEn', 'markdownContentEn', 'descriptionFr', 'HTMLContentFr', 'markdownContentFr'] },
                         { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueFr'] },
                         {
                             model: db.Doctor_Info,

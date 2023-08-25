@@ -15,14 +15,12 @@ let hasUserPassword = (password) => {
 let checkUserEmail = (userEmail) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let user = await db.User.findOne({
-                where: { email: userEmail }
-            })
-            if (user) {
-                resolve(true)
-            } else {
-                resolve(false)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let testEmail = false;
+            if (emailRegex.test(userEmail)) {
+                testEmail = true
             }
+            resolve(testEmail)
         } catch (e) {
             reject(e)
         }
@@ -34,15 +32,14 @@ let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
             let userData = {};
-            let isExist = await checkUserEmail(email);
-            if (isExist) {
-
+            let isEmail = await checkUserEmail(email);
+            if (isEmail) {
                 let user = await db.User.findOne({
-                    attributes: ['id', 'email', 'roleId', 'password', 'firstName', 'lastName'],
                     where: { email: email },
+                    attributes: ['id', 'email', 'roleId', 'password', 'firstName', 'lastName'],
                     raw: true
                 });
-                if (user) {//check lại user 1 lần nữa phòng TH data bị thay đổi trong lúc đăng nhậpp
+                if (user) {//check lại user 1 lần nữa phòng TH data bị thay đổi trong lúc đăng nhập
                     //user already exist
                     //compare password
                     let check = bcrypt.compareSync(password, user.password)
@@ -63,7 +60,7 @@ let handleUserLogin = (email, password) => {
             } else {
                 //return error
                 userData.errCode = 1;
-                userData.errMessage = `Your email isn't exist in our system. Please try another email`
+                userData.errMessage = `Wrong email !!!`
             }
             resolve(userData)
         } catch (e) {
@@ -105,34 +102,49 @@ let getAllUsers = (userId) => {
 
 //================CREATE==================
 let createNewUser = (data) => {
-    // console.log('======check data', data)
+    console.log('======check data', data)
     return new Promise(async (resolve, reject) => {
         try {
             //check email availability
-            let check = await checkUserEmail(data.email)
-            if (check === true) {//email is exist in db
+            let isEmail = await checkUserEmail(data.email)
+            console.log('======test1')
+
+            if (isEmail === false) {
+                console.log('======test2')
                 resolve({
                     errCode: 1,
-                    errMessage: 'This email is already used'
+                    errMessage: 'Wrong Email !!!'
                 })
             } else {
+                console.log('======test3')
+
                 let hashPasswordFromBcrypt = await hasUserPassword(data.password)
-                await db.User.create({//create tương đương câu lệnh INSERTINTO USER... của SQL
-                    email: data.email,
-                    password: hashPasswordFromBcrypt,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    address: data.address,
-                    phoneNumber: data.phoneNumber,
-                    gender: data.gender,
-                    roleId: data.role,
-                    positionId: data.position,
-                    image: data.avatar,
+                let user = await db.User.findOrCreate({
+                    where: { email: data.email },
+                    defaults: {
+                        email: data.email,
+                        password: hashPasswordFromBcrypt,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        address: data.address,
+                        phoneNumber: data.phoneNumber,
+                        gender: data.gender,
+                        roleId: data.role,
+                        positionId: data.position,
+                        image: data.avatar,
+                    }
                 })
-                resolve({
-                    errCode: 0,
-                    errMessage: 'OK',
-                });
+                if (user[1] === true) {
+                    resolve({
+                        errCode: 0,
+                        errMessage: `You've just create a new user`,
+                    });
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: `This email is already used`,
+                    });
+                }
             }
 
         } catch (error) {

@@ -9,7 +9,6 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             doctorId: { allowNull: false, type: Sequelize.INTEGER },
-            specialtyId: { allowNull: false, type: Sequelize.INTEGER },
             descriptionEn: { allowNull: false, type: Sequelize.TEXT },
             descriptionFr: { allowNull: false, type: Sequelize.TEXT },
             HTMLContentEn: { allowNull: false, type: Sequelize.TEXT },
