@@ -158,7 +158,7 @@ let getDetailSpecialtyByIdLocationServiceNode = async (id, locationId) => {
             } else {
                 let data = [];
                 let dataSpecialty = await db.Specialty.findOne({
-                    where: { id: id }, attributes: ['descriptionHTML_En', 'descriptionHTML_Fr', 'descriptionMarkdown_En', 'descriptionMarkdown_Fr']
+                    where: { id: id }, attributes: ['id', 'nameEn', 'nameFr', 'descriptionHTML_En', 'descriptionHTML_Fr', 'descriptionMarkdown_En', 'descriptionMarkdown_Fr']
                 }
                 )
                 data.push(dataSpecialty)
