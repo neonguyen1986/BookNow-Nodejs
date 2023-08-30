@@ -15,12 +15,68 @@ let handleLogin = async (req, res) => {
         })
     }
     let userData = await userService.handleUserLogin(email, password);
+    console.log('========userData', userData)
+    res.cookie('refreshTokenCookie', userData.refreshToken, {
+        httpOnly: true,
+        secure: false,   //when deploy change it to true
+        path: '/',
+        sameSite: 'strict',
+    })
+
     return res.status(200).json({
         errCode: userData.errCode,
         errMessage: userData.errMessage,
         user: userData.user ? userData.user : {}
     })
 }
+//================ REQUEST REFRESH TOKEN ==================
+let requestRefreshToken = async (req, res) => {
+    //GENERATE ACCESS TOKEN
+    const generateAccessToken = (user) => {
+        return jwt.sign({
+            id: user.id,
+            admin: user.admin,
+        },
+            process.env.JWT_ACCESS_KEY,//secret key to add to token
+            { expiresIn: '30s' },//after 30s, the token will be expired, user have to login again
+        );
+    };
+    //GENERATE REFRESH TOKEN
+    const generateRefreshToken = (user) => {
+        return jwt.sign({
+            id: user.id,
+            admin: user.admin,
+        },
+            process.env.JWT_REFRESH_KEY,//secret key to add to token
+            { expiresIn: '1d' },//after 1d minutes, the token will be expired
+        );
+    };
+    //Take current refresh token from user then create a new accesstoken
+    const refreshToken = req.cookies.refreshTokenCookie
+    // console.log('refreshTokenCookie======', refreshToken)
+    if (!refreshToken) return res.status(401).json("You're not authenticated")
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, user) => {
+        if (err) {
+            console.log(err)
+        }
+        else {
+            //create new refreshToken, accessToken
+            const newAccessToken = generateAccessToken(user);
+            const newRefreshToken = generateRefreshToken(user);
+
+            //save newRefreshToken in cookies
+            res.cookie('refreshTokenCookie', newRefreshToken, {
+                httpOnly: true,
+                secure: false,   //when deploy change it to true
+                path: '/',
+                sameSite: 'strict',
+            })
+            res.status(200).json({ accessToken: newAccessToken, })
+        }
+    })
+
+}
+
 //=================================================
 //           API for  user manage                 |
 //=================================================
@@ -44,9 +100,9 @@ let handleGetAllUsers = async (req, res) => {
 }
 //================CREATE==================
 let handleCreateNewUsers = async (req, res) => {
+    console.log('=======req.body:', req.body)
     try {
         let message = await userService.createNewUser(req.body);
-        console.log('======test res', message)
         return res.status(200).json(message);
     } catch (error) {
         console.log(error)
@@ -112,6 +168,7 @@ let getAllCode = async (req, res) => {
 
 module.exports = {
     handleLogin,
+    requestRefreshToken,
     handleGetAllUsers,
     handleCreateNewUsers,
     handleEditUsers,

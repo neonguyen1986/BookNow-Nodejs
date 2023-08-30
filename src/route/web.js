@@ -4,6 +4,7 @@ import userController from '../controllers/userController';
 import doctorController from '../controllers/doctorController'
 import patientControler from '../controllers/patientController'
 import specialtyController from '../controllers/specialtyController'
+import middlewareController from "../controllers/middlewareController";
 
 let router = express.Router();
 
@@ -21,11 +22,12 @@ let initWebRoutes = (app) => {
     router.get('/delete-crud', homeController.deleteCRUD);
 
     router.post('/api/login', userController.handleLogin)
+    router.post('/api/refresh', userController.requestRefreshToken)
 
     //READ
     router.get('/api/get-all-users', userController.handleGetAllUsers)
     //CREATE
-    router.post('/api/create-new-users', userController.handleCreateNewUsers)
+    router.post('/api/create-new-users', middlewareController.verifyToken, userController.handleCreateNewUsers)
     //UPDATE
     router.put('/api/edit-user', userController.handleEditUsers)
     //DELETE

@@ -1,6 +1,8 @@
 import db from '../models/index'
 import bcrypt from 'bcryptjs'
 const salt = bcrypt.genSaltSync(10) //genSaltSync là thư viện dùng để hash pass
+import jwt from 'jsonwebtoken'
+require('dotenv').config()
 
 let hasUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
@@ -31,6 +33,27 @@ let checkUserEmail = (userEmail) => {
 let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
+            //GENERATE ACCESS TOKEN
+            const generateAccessToken = (user) => {
+                return jwt.sign({
+                    id: user.id,
+                    roleId: user.roleId,
+                },
+                    process.env.JWT_ACCESS_KEY,//secret key to add to token
+                    { expiresIn: '30s' },//after 30s, the token will be expired, user have to login again
+                );
+            };
+            //GENERATE REFRESH TOKEN
+            const generateRefreshToken = (user) => {
+                return jwt.sign({
+                    id: user.id,
+                    roleId: user.roleId,
+                },
+                    process.env.JWT_REFRESH_KEY,//secret key to add to token
+                    { expiresIn: '1d' },//after 1d minutes, the token will be expired
+                );
+            };
+
             let userData = {};
             let isEmail = await checkUserEmail(email);
             if (isEmail) {
@@ -44,11 +67,17 @@ let handleUserLogin = (email, password) => {
                     //compare password
                     let check = bcrypt.compareSync(password, user.password)
                     if (check) {
+                        const accessToken = generateAccessToken(user);
+                        const refreshToken = generateRefreshToken(user);
                         userData.errCode = 0;
                         userData.errMessage = 'OK';
                         // console.log(user)
-                        delete user.password;
-                        userData.user = user;
+                        // delete user.password;
+                        const { id, password, roleId, ...others } = user//remove id, password, roleId
+                        userData.user = { ...others, accessToken: accessToken };
+                        userData.refreshToken = refreshToken;
+
+                        console.log('==================check user:', userData.user)
                     } else {
                         userData.errCode = 3;
                         userData.errMessage = 'Wrong Password';
