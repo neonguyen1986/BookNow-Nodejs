@@ -1,4 +1,6 @@
 import userService from '../services/userService'
+import jwt from 'jsonwebtoken'
+
 //================LOG IN==================
 let handleLogin = async (req, res) => {
     let email = req.body.email;
@@ -15,7 +17,7 @@ let handleLogin = async (req, res) => {
         })
     }
     let userData = await userService.handleUserLogin(email, password);
-    console.log('========userData', userData)
+    // console.log('========userData', userData)
     res.cookie('refreshTokenCookie', userData.refreshToken, {
         httpOnly: true,
         secure: false,   //when deploy change it to true
@@ -31,11 +33,12 @@ let handleLogin = async (req, res) => {
 }
 //================ REQUEST REFRESH TOKEN ==================
 let requestRefreshToken = async (req, res) => {
+    console.log('============requestRefreshToken:', req.cookies)
     //GENERATE ACCESS TOKEN
     const generateAccessToken = (user) => {
         return jwt.sign({
             id: user.id,
-            admin: user.admin,
+            roleId: user.roleId,
         },
             process.env.JWT_ACCESS_KEY,//secret key to add to token
             { expiresIn: '30s' },//after 30s, the token will be expired, user have to login again
@@ -45,7 +48,7 @@ let requestRefreshToken = async (req, res) => {
     const generateRefreshToken = (user) => {
         return jwt.sign({
             id: user.id,
-            admin: user.admin,
+            roleId: user.roleId,
         },
             process.env.JWT_REFRESH_KEY,//secret key to add to token
             { expiresIn: '1d' },//after 1d minutes, the token will be expired

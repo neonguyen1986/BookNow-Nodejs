@@ -77,7 +77,7 @@ let handleUserLogin = (email, password) => {
                         userData.user = { ...others, accessToken: accessToken };
                         userData.refreshToken = refreshToken;
 
-                        console.log('==================check user:', userData.user)
+                        // console.log('==================check user:', userData.user)
                     } else {
                         userData.errCode = 3;
                         userData.errMessage = 'Wrong Password';
@@ -89,7 +89,7 @@ let handleUserLogin = (email, password) => {
             } else {
                 //return error
                 userData.errCode = 1;
-                userData.errMessage = `Wrong email !!!`
+                userData.errMessage = `Wrong email format!!!`
             }
             resolve(userData)
         } catch (e) {

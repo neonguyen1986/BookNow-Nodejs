@@ -4,7 +4,7 @@ const middlewareController = {
 
     //Verify Token
     verifyToken: (req, res, next) => {
-        console.log('req.user in Mid before===============================', req.headers.token)//undefined
+        console.log('accToken======', req.headers.token)//undefined
         const token = req.headers.token; //get token from user
         if (token) {
             const accessToken = token.split(" ")[1] //we must take [1] because token= bearer yourtokenkeyhere
@@ -16,8 +16,8 @@ const middlewareController = {
                     })//403:forbidden
                 } else {
                     req.user = user;
-                    console.log('req.user in Mid after========', req.user)
-                    console.log('req.user in Mid after body========', req.body)
+                    // console.log('req.user in Mid after========', req.user)
+                    // console.log('req.user in Mid after body========', req.body)
                     //has id, admin, iat, exp: this use is from accessToken function
                     next();
                 }

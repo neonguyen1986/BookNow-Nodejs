@@ -29,7 +29,7 @@ let initWebRoutes = (app) => {
     //CREATE
     router.post('/api/create-new-users', middlewareController.verifyToken, userController.handleCreateNewUsers)
     //UPDATE
-    router.put('/api/edit-user', userController.handleEditUsers)
+    router.put('/api/edit-user', middlewareController.verifyToken, userController.handleEditUsers)
     //DELETE
     router.delete('/api/delete-user', userController.handleDeleteUsers)
 
