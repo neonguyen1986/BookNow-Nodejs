@@ -21,8 +21,8 @@ let getTopDoctorServiceNode = (limitInput) => {
                     exclude: ['password'],
                 },
                 include: [
-                    { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueEn'] },
-                    { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueEn'] }
+                    { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueFr'] },
+                    { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueFr'] }
                 ],
                 where: {
                     roleId: 'R2',
@@ -258,6 +258,7 @@ let editDoctorMarkdownServiceNode = (data) => {
     })
 }
 let bulkCreateScheduleServiceNode = (data) => {
+    // console.log('---------data:', data)
     return new Promise(async (resolve, reject) => {
         try {
             // console.log('check data', data)
@@ -274,20 +275,30 @@ let bulkCreateScheduleServiceNode = (data) => {
                         return item;
                     })
                 }
-                //get existing in DB
-                let existing = await db.Schedule.findAll({
-                    where: { doctorId: data.doctorId, date: data.formatedDate },
-                    attributes: ['timeType', 'date', 'doctorId', 'maxNumber']
-                })
 
-                //compare data from DB and React
-                let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                    return a.timeType === b.timeType && +a.date === +b.date;
-                })
+                //Delete current Schedule from DB
+                await db.Schedule.destroy({
+                    where: { doctorId: data.doctorId, date: data.formatedDate }
+                });
+                //Add bulk Data to DB
+                await db.Schedule.bulkCreate(data.arrSchedule)
+
+
+                //======BULK CREATE TO ADD DATA TO DB, ONLY ADD EXTRA DATA===
+                //get existing in DB
+                // let existing = await db.Schedule.findAll({
+                //     where: { doctorId: data.doctorId, date: data.formatedDate },
+                //     attributes: ['timeType', 'date', 'doctorId', 'maxNumber']
+                // })
+
+                // //compare data from DB and React
+                // let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+                //     return a.timeType === b.timeType && +a.date === +b.date;
+                // })
                 // console.log('check toCreate:', toCreate)
-                if (toCreate?.length > 0) {
-                    await db.Schedule.bulkCreate(toCreate)
-                }
+                // if (toCreate?.length > 0) {
+                //     await db.Schedule.bulkCreate(toCreate)
+                // }
 
                 //Bulk schedule
                 resolve({
